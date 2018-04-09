@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="style.css">
+		<title>Fallback generator</title>
+	</head>
+	<body>
+		<div id="info-container">
+			<h2 id="project-path" class="path">Project path:</h2>
+			<h2 id="destination-path" class="path">Destination path:</h2>
+			<input id="save-in-banner" type="checkbox" name="save-in-banner" value="false"><h3>Save in banner folder</h3></input>
+		</div>
+		<div id="buttons-container">
+			<button id="btn-load-project" type="button" name="button">set html folder</button>
+			<button id="btn-set-destination" type="button" name="button">set destination folder</button>
+			<button id="btn-generate" type="button" name="button">generate</button>
+		</div>
+		<script>
+		  require('./renderer.js')
+		</script>
+	</body>
+</html>

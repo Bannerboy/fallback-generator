@@ -1,0 +1,22 @@
+{
+  "name": "fallback-generator",
+  "version": "1.0.0",
+  "description": "A small electron app to generate fallback images for display ads.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "fallback",
+    "display",
+    "ads",
+    "generator"
+  ],
+  "author": "Alexander Flink",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^1.8.4",
+    "fs-extra": "^5.0.0",
+    "walkdir": "0.0.12"
+  }
+}
