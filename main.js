@@ -4,7 +4,7 @@ const url = require("url");
 const walkdir = require("walkdir");
 const fs = require("fs-extra");
 
-let mainWindow, htmlDirectory, destinationDirectory, banners = [], fallbacks = [], saveInBanner;
+let mainWindow, htmlDirectory, destinationDirectory, banners = [], fallbacks = [], saveInBanner, bannerWindow;
 
 
 function createWindow() {
@@ -72,7 +72,10 @@ function onWebContentsPaint(event, dirty, nativeImage) {
 	// save fallback
 	fs.outputFile(fallback, jpg, () => {
 		fallbacks.push(fallback);
-		browserWindow.destroy();
+
+		// remove first element in banner array
+		banners.shift();
+		generateFallbacks();
 	});
 }
 
@@ -84,33 +87,45 @@ function collectHTMLBanner(filename) {
 
 function allBannersCollected() {
 
-	// create a window for each banner
-	banners.forEach(bannerPath => {
-		let size = bannerPath.match(/[0-9]+x[0-9]+/g)[0].split("x").map(value => { return parseInt(value); });
-		let parts = bannerPath.split("/");
-		let name = parts[parts.length - 2]; // get the next last part of the path
-		let win = new BrowserWindow({
-			width: size[0],
-			height: size[1],
-			resizable: true,
-			zoomFactor: 1,
-			allowRunningInsecureContent: true,
-			webPreferences: {
-				offscreen: true,
-				preload: path.join(__dirname, "preload.js")
-			}
-		});
-
-		// save bannername on browserwindow for easy reference later
-		win.bannerName = name;
-
-		// load banner
-		win.loadURL(url.format({
-			pathname: bannerPath,
-			protocol: "file:",
-			slashes: true
-		}));
+	// create window to display banners in
+	bannerWindow = new BrowserWindow({
+		width: 100,
+		height: 100,
+		resizable: true,
+		allowRunningInsecureContent: true,
+		webPreferences: {
+			offscreen: true,
+			preload: path.join(__dirname, "preload.js")
+		}
 	});
+
+	generateFallbacks();
+}
+
+function generateFallbacks() {
+	if (banners.length == 0) {
+		finishedHandler();
+		return;
+	}
+
+	let bannerPath = banners[0];
+	let size = bannerPath.match(/[0-9]+x[0-9]+/g)[0].split("x").map(value => { return parseInt(value); });
+	let parts = bannerPath.split("/");
+	let name = parts[parts.length - 2]; // get the next last part of the path
+	bannerWindow.bannerName = name;
+
+	bannerWindow.setSize(size[0], size[1]);
+
+	// load banner
+	bannerWindow.loadURL(url.format({
+		pathname: bannerPath,
+		protocol: "file:",
+		slashes: true
+	}));
+}
+
+function finishedHandler() {
+	bannerWindow.destroy();
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
