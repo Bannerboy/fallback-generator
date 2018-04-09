@@ -24,14 +24,14 @@ function createWindow() {
 	});
 
 	ipcMain.on("load-project", (event, prevDirectory = "") => {
-		htmlDirectory = dialog.showOpenDialog({title: 'Select html directory', defaultPath: prevDirectory, properties: ['openDirectory']})[0];
+		htmlDirectory = dialog.showOpenDialog({title: 'Select html directory', defaultPath: prevDirectory, properties: ['openDirectory', 'createDirectory']})[0];
 
 		// tell renderer that project is selected
 		event.sender.send("project-loaded", htmlDirectory);
 	});
 
 	ipcMain.on("set-destination", (event, prevDirectory = "") => {
-		destinationDirectory = dialog.showOpenDialog({title: 'Select destination directory', defaultPath: prevDirectory, properties: ['openDirectory']})[0];
+		destinationDirectory = dialog.showOpenDialog({title: 'Select destination directory', defaultPath: prevDirectory, properties: ['openDirectory', 'createDirectory']})[0];
 
 		// tell renderer that destination is selected
 		event.sender.send("destination-set", destinationDirectory);
