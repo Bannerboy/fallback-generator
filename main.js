@@ -4,7 +4,7 @@ const url = require("url");
 const walkdir = require("walkdir");
 const fs = require("fs-extra");
 
-let mainWindow, htmlDirectory, destinationDirectory, banners = [], fallbacks = [], saveInBanner, bannerWindow;
+let mainWindow, htmlDirectory, destinationDirectory, banners = [], fallbacks = [], saveInBanner, maxSize = 50, bannerWindow;
 
 
 function createWindow() {
@@ -37,10 +37,12 @@ function createWindow() {
 		event.sender.send("destination-set", destinationDirectory);
 	});
 
-	ipcMain.on("generate-fallbacks", (event, arg) => {
+	ipcMain.on("generate-fallbacks", (event, arg1, arg2) => {
 
 		// if fallbacks should be saved within banner folders
-		saveInBanner = arg;
+		saveInBanner = arg1;
+
+		maxSize = arg2;
 
 		// empty banners array
 		banners = [];
@@ -64,7 +66,8 @@ function onWebContentsPaint(event, dirty, nativeImage) {
 	let name = browserWindow.bannerName;
 
 	let image = nativeImage.resize({width: size[0], height: size[1]});
-	let jpg = image.toJPEG(100);
+
+	let jpg = saveToJPEG(image, 100);
 
 	let dest = saveInBanner ? path.join(destinationDirectory, name) : destinationDirectory;
 	let fallback = path.join(dest, `${name}.jpg`);
@@ -77,6 +80,15 @@ function onWebContentsPaint(event, dirty, nativeImage) {
 		banners.shift();
 		generateFallbacks();
 	});
+}
+
+function saveToJPEG(image, quality) {
+	let jpg = image.toJPEG(quality);
+	if (jpg.byteLength / 1000 > maxSize) {
+		return saveToJPEG(image, quality - 1);
+	} else {
+		return jpg;
+	}
 }
 
 function collectHTMLBanner(filename) {

@@ -8,6 +8,7 @@ const destinationButton = document.querySelector("#btn-set-destination");
 const projectPathText = document.querySelector("#project-path");
 const destinationPathText = document.querySelector("#destination-path");
 const saveInBanner = document.querySelector("#save-in-banner")
+const maxSize = document.querySelector("#max-size")
 
 loadProjectButton.onclick = () => {
 	ipcRenderer.send("load-project", localStorage.getItem("htmlDirectory"));
@@ -18,7 +19,7 @@ destinationButton.onclick = () => {
 };
 
 generateButton.onclick = () => {
-	ipcRenderer.send("generate-fallbacks", saveInBanner.checked);
+	ipcRenderer.send("generate-fallbacks", saveInBanner.checked, parseInt(maxSize.value));
 };
 
 ipcRenderer.on("project-loaded", (event, arg) => {
