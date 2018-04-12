@@ -7,66 +7,91 @@ html {
 body {
 	height: 100%;
 	width: 100%;
-	background-color: #0e2c31;
+	background-color: #5cafc2;
 	font-family: helvetica;
+	display: table;
 }
 
-#info-container {
-	position: absolute;
-	top: 10px;
-	left: 10px;
-}
-
-#buttons-container {
-	height: 100%;
+section {
+	display: table-row;
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
+	padding: 10px;
+}
+
+img {
+	width: 30%;
+	height: auto;
+	display: block;
+	margin: auto;
+}
+
+h2 {
+	font-weight: bold;
+	font-size: 15px;
+	margin: 5px;
+	/* text-decoration: underline; */
+	/* text-decoration-color: #fae470; */
+	border-bottom: 2px solid #fae470;
+	display: inline-block;
+}
+
+p {
+	font-size: 11px;
+	margin: 5px;
+	display: inline;
+}
+
+#button-select-path {
+	height: 10px;
+	line-height: 0;
+}
+
+input[type=number] {
+	width: 18px;
+	height: 16px;
+	text-align: center;
+	border-radius: 3px;
+	background-color: #87d2e3;
+	margin-left: 5px;
+	border: none;
+	outline: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+article {
+	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+	padding: 5px;
+	border-radius: 5px;
+	margin-bottom: 10px;
+}
+
+#button-container {
+	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-button {
-	margin: 10px 0;
-	border: none;
+#button-generate {
+	font-size: 12px;
+	letter-spacing: 3px;
 	background-color: #e6535e;
-	border-radius: 19px;
-
-	padding: 13px 20px;
-
-	display: block;
-	cursor: pointer;
-
-	font-family: helvetica;
-	font-size: 10px;
-	letter-spacing: 4px;
-	text-align: center;
-	color: white;
-
-	outline: none;
 	border: none;
-
-	user-select: none;
-}
-
-button:hover {
-	background-color: #ba4149;
-}
-
-h2, h3 {
-	font-family: helvetica;
-	font-size: 10px;
+	outline: none;
 	color: #FFF;
+	border-radius: 20px;
+	cursor: pointer;
+	padding: 10px 30px;
+	transition: 0.2s;
 }
 
-h3 {
-	margin-left: 5px;
-	display: inline;
-}
-
-#btn-generate {
-	display: none;
-}
-
-#btn-set-destination {
-	display: none;
+#button-generate:hover {
+	background-color: #000;
+	transition: 0.2s;
 }

@@ -4,7 +4,9 @@
   "description": "A small electron app to generate fallback images for display ads.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+	"pack": "electron-builder --dir",
+	"dist": "electron-builder"
   },
   "keywords": [
     "fallback",
@@ -15,8 +17,11 @@
   "author": "Alexander Flink",
   "license": "ISC",
   "dependencies": {
-    "electron": "^1.8.4",
     "fs-extra": "^5.0.0",
     "walkdir": "0.0.12"
+  },
+  "devDependencies": {
+	"electron": "^1.8.4",
+    "electron-builder": "^20.8.1"
   }
 }

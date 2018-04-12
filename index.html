@@ -2,21 +2,29 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<link rel="stylesheet" href="reset.css">
 		<link rel="stylesheet" href="style.css">
 		<title>Fallback generator</title>
 	</head>
 	<body>
-		<div id="info-container">
-			<h2 id="project-path" class="path">Project path:</h2>
-			<h2 id="destination-path" class="path">Destination path:</h2>
-			<input id="save-in-banner" type="checkbox" name="save-in-banner" value="false"><h3>Save in banner folder</h3></input><br>
-			<input id="max-size" type="text" name="max-size" size="3" value="50"><h3>Max size</h3></input>
-		</div>
-		<div id="buttons-container">
-			<button id="btn-load-project" type="button" name="button">set html folder</button>
-			<button id="btn-set-destination" type="button" name="button">set destination folder</button>
-			<button id="btn-generate" type="button" name="button">generate</button>
-		</div>
+		<section>
+			<img src="logo.svg" alt="">
+		</section>
+		<section id="panels">
+			<article>
+				<h2>Info</h2><br>
+				<p id="project-path">Project path:</p>
+				<button id="button-select-path"><span>...</span></button><br>
+				<input type="checkbox" id="save-in-banner" value="false"><p>Save in banner folder</p></input>
+			</article>
+			<article>
+				<h2>Quality</h2><br>
+				<input type="number" id="max-size" size="3" value="50"><p>KB</p>
+			</article>
+		</section>
+		<section id="button-container">
+			<button id="button-generate">GENERATE</button>
+		</section>
 		<script>
 		  require('./renderer.js')
 		</script>

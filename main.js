@@ -9,7 +9,7 @@ let mainWindow, htmlDirectory, destinationDirectory, banners = [], fallbacks = [
 
 function createWindow() {
 	// Create main window
-	mainWindow = new BrowserWindow({width: 800, height: 600});
+	mainWindow = new BrowserWindow({width: 600, height: 350});
 
 	// and load the index.html of the app.
 	mainWindow.loadURL(url.format({
@@ -24,25 +24,20 @@ function createWindow() {
 	});
 
 	ipcMain.on("load-project", (event, prevDirectory = "") => {
-		htmlDirectory = dialog.showOpenDialog({title: 'Select html directory', defaultPath: prevDirectory, properties: ['openDirectory', 'createDirectory']})[0];
-
-		// tell renderer that project is selected
-		event.sender.send("project-loaded", htmlDirectory);
+		let path = dialog.showOpenDialog({title: 'Select html directory', defaultPath: prevDirectory, properties: ['openDirectory', 'createDirectory']})[0];
+		loadProject(path);
 	});
 
-	ipcMain.on("set-destination", (event, prevDirectory = "") => {
-		destinationDirectory = dialog.showOpenDialog({title: 'Select destination directory', defaultPath: prevDirectory, properties: ['openDirectory', 'createDirectory']})[0];
+	ipcMain.on("generate-fallbacks", (event, _saveInBanner, _maxSize, _prevDirectory) => {
 
-		// tell renderer that destination is selected
+		// set destination directory
+		destinationDirectory = dialog.showOpenDialog({title: 'Select destination directory', defaultPath: _prevDirectory, properties: ['openDirectory', 'createDirectory']})[0];
 		event.sender.send("destination-set", destinationDirectory);
-	});
-
-	ipcMain.on("generate-fallbacks", (event, arg1, arg2) => {
 
 		// if fallbacks should be saved within banner folders
-		saveInBanner = arg1;
+		saveInBanner = _saveInBanner;
 
-		maxSize = arg2;
+		maxSize = _maxSize;
 
 		// empty banners array
 		banners = [];
@@ -58,6 +53,11 @@ function createWindow() {
 	ipcMain.on("capture-screen", (event) => {
 		event.sender.once("paint", onWebContentsPaint);
 	});
+}
+
+function loadProject(path) {
+	htmlDirectory = path;
+	mainWindow.webContents.send("project-loaded", htmlDirectory);
 }
 
 function onWebContentsPaint(event, dirty, nativeImage) {
@@ -144,6 +144,9 @@ function finishedHandler() {
 // EVENT LISTENERS
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 app.on("ready", createWindow);
+app.on("open-file", (e, path) => {
+	loadProject(path);
+});
 app.on("window-all-closed", () => {
 	app.quit();
 });
