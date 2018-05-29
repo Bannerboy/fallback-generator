@@ -4,29 +4,35 @@
 		<meta charset="utf-8">
 		<link rel="stylesheet" href="reset.css">
 		<link rel="stylesheet" href="style.css">
-		<title>Fallback generator</title>
+		<title>Fallback Cannon</title>
 	</head>
 	<body>
-		<section>
-			<img src="logo.svg" alt="">
-		</section>
-		<section id="panels">
-			<article>
-				<h2>Info</h2><br>
-				<p id="project-path">Project path:</p>
-				<button id="button-select-path"><span>...</span></button><br>
-				<input type="checkbox" id="save-in-banner" value="false"><p>Save in banner folder</p></input>
-			</article>
-			<article>
-				<h2>Quality</h2><br>
-				<input type="number" id="max-size" size="3" value="50"><p>KB</p>
-			</article>
-		</section>
+		<img src="logo.svg">
 		<section id="button-container">
-			<button id="button-generate">GENERATE</button>
+			<button class="button" id="button-load-project">LOAD PROJECT</button>
+			<!-- <input id="button-load-project" type="file" name="file" directory webkitdirectory/> -->
+			<!-- <label class="button" for="button-load-project">LOAD PROJECT</label> -->
+			<button class="button" id="button-generate" disabled>GENERATE</button>
+		</section>
+		<section id="settings-container">
+			<div>
+				<input id="save-in-banner" type="checkbox"/>
+				<p>Save in banner</p>
+			</div>
+			<div>
+				<input id="max-size" size="2" value="50" type="number"/>
+				<p>K Max size</p>
+			</div>
+			<div>
+				<hr>
+				<h2>Fast forward method</h2>
+				<input type="radio" name="fast-forward-method" value="fast-forward"/> <input id="seek-to-time" type="number" size="2" value="10"><p>Seconds</p>
+				<input type="radio" name="fast-forward-method" value="seek" checked/> <p>Seek to end</p>
+				<input type="radio" name="fast-forward-method" value="callback"/> <p>Callback</p>
+			</div>
 		</section>
 		<script>
-		  require('./renderer.js')
+		  require('./renderer.js');
 		</script>
 	</body>
 </html>

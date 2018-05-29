@@ -9,29 +9,46 @@ let mainWindow, htmlDirectory, destinationDirectory, banners = [], fallbacks = [
 
 function createWindow() {
 	// Create main window
-	mainWindow = new BrowserWindow({width: 600, height: 350});
+	mainWindow = new BrowserWindow({width: 300, height: 300});
 
 	// and load the index.html of the app.
 	mainWindow.loadURL(url.format({
 		pathname: path.join(__dirname, 'index.html'),
 		protocol: 'file:',
-		slashes: true
+		slashes: true,
+		resizable: false
 	}));
+
+	mainWindow.setResizable(false);
 
 	// Emitted when the window is closed
 	mainWindow.on('closed', () => {
 		mainWindow = null;
 	});
 
-	ipcMain.on("load-project", (event, prevDirectory = "") => {
-		let path = dialog.showOpenDialog({title: 'Select html directory', defaultPath: prevDirectory, properties: ['openDirectory', 'createDirectory']})[0];
-		loadProject(path);
+	ipcMain.on("load-project", (event, options) => {
+		let path = "";
+		let prevDirectory = options.prevDirectory || "";
+		let directory = options.directory || "";
+		console.log(directory);
+		if (!directory) {
+			path = dialog.showOpenDialog({title: 'Select html directory', defaultPath: prevDirectory, properties: ['openDirectory', 'createDirectory']});
+		} else {
+			path = [directory];
+		}
+		if (path) loadProject(path[0]);
 	});
 
-	ipcMain.on("generate-fallbacks", (event, _saveInBanner, _maxSize, _prevDirectory) => {
+	ipcMain.on("generate-fallbacks", (event, options) => {
+
+		let _saveInBanner = options.saveInBanner || false;
+		let _maxSize = options.maxSize || maxSize;
+		let _prevDirectory = options.prevDirectory || "";
 
 		// set destination directory
-		destinationDirectory = dialog.showOpenDialog({title: 'Select destination directory', defaultPath: _prevDirectory, properties: ['openDirectory', 'createDirectory']})[0];
+		let destPath = dialog.showOpenDialog({title: 'Select destination directory', defaultPath: _prevDirectory, properties: ['openDirectory', 'createDirectory']});
+		if (!destPath) return;
+		destinationDirectory = destPath[0];
 		event.sender.send("destination-set", destinationDirectory);
 
 		// if fallbacks should be saved within banner folders
@@ -52,6 +69,11 @@ function createWindow() {
 
 	ipcMain.on("capture-screen", (event) => {
 		event.sender.once("paint", onWebContentsPaint);
+	});
+
+	ipcMain.on("timeout", (event) => {
+		console.log("Banner timed out!");
+		loadBanner();
 	});
 }
 
@@ -77,8 +99,7 @@ function onWebContentsPaint(event, dirty, nativeImage) {
 		fallbacks.push(fallback);
 
 		// remove first element in banner array
-		banners.shift();
-		generateFallbacks();
+		loadBanner();
 	});
 }
 
@@ -111,10 +132,10 @@ function allBannersCollected() {
 		}
 	});
 
-	generateFallbacks();
+	loadBanner();
 }
 
-function generateFallbacks() {
+function loadBanner() {
 	if (banners.length == 0) {
 		finishedHandler();
 		return;
@@ -134,6 +155,8 @@ function generateFallbacks() {
 		protocol: "file:",
 		slashes: true
 	}));
+
+	banners.shift();
 }
 
 function finishedHandler() {
