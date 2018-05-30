@@ -1,5 +1,5 @@
 {
-  "name": "Fallback Cannon",
+  "name": "fallback-generator",
   "version": "1.0.0",
   "description": "A small electron app to generate fallback images for display ads.",
   "main": "main.js",
