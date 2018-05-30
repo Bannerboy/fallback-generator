@@ -1,12 +1,12 @@
 {
-  "name": "fallback-generator",
+  "name": "Fallback Cannon",
   "version": "1.0.0",
   "description": "A small electron app to generate fallback images for display ads.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-	"pack": "electron-builder --dir",
-	"dist": "electron-builder"
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "keywords": [
     "fallback",
@@ -14,14 +14,15 @@
     "ads",
     "generator"
   ],
-  "author": "Alexander Flink",
+  "author": "Bannerboy",
   "license": "ISC",
   "dependencies": {
     "fs-extra": "^5.0.0",
+    "npm": "^6.1.0",
     "walkdir": "0.0.12"
   },
   "devDependencies": {
-	"electron": "^1.8.4",
+    "electron": "^1.8.4",
     "electron-builder": "^20.8.1"
   }
 }
