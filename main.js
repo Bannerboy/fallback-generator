@@ -1,10 +1,10 @@
-const {electron, app, BrowserWindow, ipcMain, dialog} = require("electron");
-const path = require("path");
-const url = require("url");
-const walkdir = require("walkdir");
-const fs = require("fs-extra");
+const {electron, app, BrowserWindow, ipcMain, dialog} = require('electron');
+const path = require('path');
+const url = require('url');
+const walkdir = require('walkdir');
+const fs = require('fs-extra');
 
-let mainWindow, htmlDirectory, destinationDirectory, banners = [], fallbacks = [], saveInBanner, maxSize = 50, bannerWindow;
+let mainWindow, htmlDirectory, destinationDirectory, banners = [], fallbacks = [], saveInBanner, maxSize = 50, bannerWindow, log = [];
 
 
 function createWindow() {
@@ -26,11 +26,10 @@ function createWindow() {
 		mainWindow = null;
 	});
 
-	ipcMain.on("load-project", (event, options) => {
-		let path = "";
-		let prevDirectory = options.prevDirectory || "";
-		let directory = options.directory || "";
-		console.log(directory);
+	ipcMain.on('load-project', (event, options) => {
+		let path = '';
+		let prevDirectory = options.prevDirectory || '';
+		let directory = options.directory || '';
 		if (!directory) {
 			path = dialog.showOpenDialog({title: 'Select html directory', defaultPath: prevDirectory, properties: ['openDirectory', 'createDirectory']});
 		} else {
@@ -39,17 +38,17 @@ function createWindow() {
 		if (path) loadProject(path[0]);
 	});
 
-	ipcMain.on("generate-fallbacks", (event, options) => {
-
+	ipcMain.on('generate-fallbacks', (event, options) => {
+		log = [];
 		let _saveInBanner = options.saveInBanner || false;
 		let _maxSize = options.maxSize || maxSize;
-		let _prevDirectory = options.prevDirectory || "";
+		let _prevDirectory = options.prevDirectory || '';
 
 		// set destination directory
 		let destPath = dialog.showOpenDialog({title: 'Select destination directory', defaultPath: _prevDirectory, properties: ['openDirectory', 'createDirectory']});
 		if (!destPath) return;
 		destinationDirectory = destPath[0];
-		event.sender.send("destination-set", destinationDirectory);
+		event.sender.send('destination-set', destinationDirectory);
 
 		// if fallbacks should be saved within banner folders
 		saveInBanner = _saveInBanner;
@@ -62,24 +61,31 @@ function createWindow() {
 		// start walking through the directory and collect banners
 		let emitter = walkdir(htmlDirectory);
 
-		emitter.on("file", collectHTMLBanner);
+		emitter.on('file', collectHTMLBanner);
 
-		emitter.on("end", allBannersCollected);
+		emitter.on('end', allBannersCollected);
 	});
 
-	ipcMain.on("capture-screen", (event) => {
-		event.sender.once("paint", onWebContentsPaint);
+	ipcMain.on('capture-screen', (event) => {
+		// trigger a redraw and listen for paint event
+		event.sender.invalidate();
+		event.sender.once('paint', onWebContentsPaint);
 	});
 
-	ipcMain.on("timeout", (event) => {
-		console.log("Banner timed out!");
+	ipcMain.on('log', (event, arg) => {
+		// add line to log
+		log.push(arg);
+	});
+
+	ipcMain.on('timeout', (event) => {
+		console.log('Banner timed out!');
 		loadBanner();
 	});
 }
 
 function loadProject(path) {
 	htmlDirectory = path;
-	mainWindow.webContents.send("project-loaded", htmlDirectory);
+	mainWindow.webContents.send('project-loaded', htmlDirectory);
 }
 
 function onWebContentsPaint(event, dirty, nativeImage) {
@@ -113,7 +119,7 @@ function saveToJPEG(image, quality) {
 }
 
 function collectHTMLBanner(filename) {
-	if (filename.substr(filename.indexOf(".")) == ".html") {
+	if (filename.substr(filename.indexOf('.')) == '.html') {
 		banners.push(filename);
 	}
 }
@@ -128,9 +134,12 @@ function allBannersCollected() {
 		allowRunningInsecureContent: true,
 		webPreferences: {
 			offscreen: true,
-			preload: path.join(__dirname, "preload.js")
+			preload: path.join(__dirname, 'preload.js')
 		}
 	});
+
+	// when finished or interrupted, show any logs
+	bannerWindow.webContents.on('destroyed', showLogs);
 
 	loadBanner();
 }
@@ -142,8 +151,8 @@ function loadBanner() {
 	}
 
 	let bannerPath = banners[0];
-	let size = bannerPath.match(/[0-9]+x[0-9]+/g)[0].split("x").map(value => { return parseInt(value); });
-	let parts = bannerPath.split("/");
+	let size = bannerPath.match(/[0-9]+x[0-9]+/g)[0].split('x').map(value => { return parseInt(value); });
+	let parts = bannerPath.split('/');
 	let name = parts[parts.length - 2]; // get the next last part of the path
 	bannerWindow.bannerName = name;
 
@@ -152,9 +161,14 @@ function loadBanner() {
 	// load banner
 	bannerWindow.loadURL(url.format({
 		pathname: bannerPath,
-		protocol: "file:",
+		protocol: 'file:',
 		slashes: true
 	}));
+
+	// set globally accessible data
+	global.shared = {
+		bannerName: name
+	};
 
 	banners.shift();
 }
@@ -163,13 +177,28 @@ function finishedHandler() {
 	bannerWindow.destroy();
 }
 
+function showLogs() {
+	if (log.length === 0) return;
+	// create window to display banners in
+	let logWindow = new BrowserWindow();
+	logWindow.loadURL(url.format({
+		pathname: path.join(__dirname, 'logs.html'),
+		protocol: 'file:',
+		slashes: true
+	}));
+
+	logWindow.webContents.on('did-finish-load', () => {
+		logWindow.webContents.send('log', log);
+	});
+}
+
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // EVENT LISTENERS
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-app.on("ready", createWindow);
-app.on("open-file", (e, path) => {
+app.on('ready', createWindow);
+app.on('open-file', (e, path) => {
 	loadProject(path);
 });
-app.on("window-all-closed", () => {
+app.on('window-all-closed', () => {
 	app.quit();
 });

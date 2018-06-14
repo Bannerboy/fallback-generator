@@ -68,6 +68,13 @@ p {
 	display: inline;
 }
 
+.log {
+	display: list-item;
+	margin: 10px;
+	list-style-type: disc;
+	color: #FFF;
+}
+
 #max-size-container {
 	display: inline;
 }
