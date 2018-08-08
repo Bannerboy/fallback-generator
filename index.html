@@ -4,6 +4,8 @@
 		<meta charset="utf-8">
 		<link rel="stylesheet" href="reset.css">
 		<link rel="stylesheet" href="style.css">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
 		<title>Fallback Generator</title>
 	</head>
 	<body>
@@ -26,9 +28,20 @@
 			<div>
 				<hr>
 				<h2>Fast forward method</h2>
-				<input type="radio" name="fast-forward-method" value="fast-forward"/> <input id="seek-to-time" type="number" size="2" value="30"><p>Seconds</p>
+				<input type="radio" name="fast-forward-method" value="fast-forward"/> <input id="seek-to-time" type="number" size="2" value="30"> <p>Seconds</p>
 				<input type="radio" name="fast-forward-method" value="seek" checked/> <p>Seek to end</p>
 				<input type="radio" name="fast-forward-method" value="callback"/> <p>Callback</p>
+				<hr>
+				<h2>Settings</h2>
+				<ul id="settings">
+					<li class="settings-item">
+						<input id="load-time" type="number" size="2" value="0"> <p>Seconds extra load time</p>
+					</li>
+					<li class="settings-item">
+						<input id="timeout-time" type="number" size="2" value="5"> <p>Seconds to timeout</p>
+					</li>
+				</ul>
+				<br>
 			</div>
 		</section>
 		<script>

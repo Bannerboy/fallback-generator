@@ -4,12 +4,12 @@ const url = require('url');
 const walkdir = require('walkdir');
 const fs = require('fs-extra');
 
-let mainWindow, htmlDirectory, destinationDirectory, banners = [], fallbacks = [], saveInBanner, maxSize = 50, bannerWindow, log = [];
+let mainWindow, bannerWindow, settingsWindow, htmlDirectory, destinationDirectory, banners = [], fallbacks = [], saveInBanner, maxSize = 50, log = [];
 
 
 function createWindow() {
 	// Create main window
-	mainWindow = new BrowserWindow({width: 300, height: 300});
+	mainWindow = new BrowserWindow({width: 320, height: 400});
 
 	// and load the index.html of the app.
 	mainWindow.loadURL(url.format({

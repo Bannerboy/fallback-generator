@@ -22,11 +22,16 @@ if (fastForwardMethod === 'callback') {
 		captureBySeek();
 	}, 500);
 } else {
+
+	// get values from localStorage
+	let timeoutTime = parseFloat(localStorage.getItem('timeout-time')) * 1000;
+	let loadTime = parseFloat(localStorage.getItem('load-time')) * 1000;
+
 	window.addEventListener('load', () => {
 		setTimeout(()=> {
 			// get amount of seconds to wait
-			let seconds = parseFloat(localStorage.getItem('seek-to-time'));
 			// get top level timeline
+			let seconds = parseFloat(localStorage.getItem('seek-to-time'));
 			let rootTimeline = TimelineLite.exportRoot();
 			switch (fastForwardMethod) {
 				case 'fast-forward':
@@ -43,8 +48,8 @@ if (fastForwardMethod === 'callback') {
 			setTimeout(() => {
 				ipcRenderer.send('log', `${bannerName}: Unknown error, timed out.`);
 				ipcRenderer.send('timeout');
-			}, 5000);
-		}, 100);
+			}, timeoutTime);
+		}, loadTime + 100);
 	});
 }
 

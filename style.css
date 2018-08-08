@@ -27,10 +27,11 @@ body {
 }
 
 h2 {
-	font-size: 12px;
+	font-weight: bold;
+	font-size: 14px;
 	color: #FFF;
 	text-align: center;
-	margin: 5px 0;
+	margin: 10px 0;
 }
 
 hr {
@@ -73,6 +74,10 @@ p {
 	margin: 10px;
 	list-style-type: disc;
 	color: #FFF;
+}
+
+.settings-item {
+	margin-top: 5px;
 }
 
 #max-size-container {
