@@ -9,6 +9,9 @@ const shared = electron.remote.getGlobal('shared');
 let fastForwardMethod = localStorage.getItem('fast-forward');
 // get current bannerName
 let bannerName = shared.bannerName;
+// get values from localStorage
+let timeoutTime = parseFloat(localStorage.getItem('timeout-time')) * 1000;
+let loadTime = parseFloat(localStorage.getItem('load-time')) * 1000;
 
 // if fast forward method is callback, run immediately before onload
 if (fastForwardMethod === 'callback') {
@@ -16,17 +19,12 @@ if (fastForwardMethod === 'callback') {
 	window.bb_fallback = () => {
 		capture();
 	};
-	// if fallback method is not called in half a second, run seek method instead
+	// if fallback method is not called in timeout seconds, run seek method instead
 	setTimeout(() => {
 		ipcRenderer.send('log', `${bannerName}: Callback method was never called, defaulting to "Seek to end" method.`);
 		captureBySeek();
-	}, 500);
+	}, timeoutTime);
 } else {
-
-	// get values from localStorage
-	let timeoutTime = parseFloat(localStorage.getItem('timeout-time')) * 1000;
-	let loadTime = parseFloat(localStorage.getItem('load-time')) * 1000;
-
 	window.addEventListener('load', () => {
 		setTimeout(()=> {
 			// get amount of seconds to wait
@@ -54,12 +52,12 @@ if (fastForwardMethod === 'callback') {
 }
 
 function captureBySeek() {
+	console.log('captureBySeek');
 	// get top level timeline
 	let rootTimeline = TimelineLite.exportRoot();
 	// seek to end of timeline
 	rootTimeline.seek(rootTimeline.duration());
-	setTimeout(capture, 1);
-	capture();
+	setTimeout(capture, 100);
 }
 
 function capture() {
