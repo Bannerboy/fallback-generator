@@ -52,7 +52,6 @@ if (fastForwardMethod === 'callback') {
 }
 
 function captureBySeek() {
-	console.log('captureBySeek');
 	// get top level timeline
 	let rootTimeline = TimelineLite.exportRoot();
 	// seek to end of timeline
