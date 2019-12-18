@@ -93,7 +93,7 @@ function onWebContentsPaint(event, dirty, nativeImage) {
 	let size = browserWindow.getSize();
 	let name = browserWindow.bannerName;
 
-	let image = nativeImage.resize({width: size[0], height: size[1]});
+	let image = nativeImage.resize({width: size[0] * .5, height: size[1] * .5});
 
 	let jpg = saveToJPEG(image, 100);
 
@@ -134,6 +134,7 @@ function allBannersCollected() {
 		allowRunningInsecureContent: true,
 		webPreferences: {
 			offscreen: true,
+			zoomFactor:2,
 			preload: path.join(__dirname, 'preload.js')
 		}
 	});
@@ -156,7 +157,7 @@ function loadBanner() {
 	let name = parts[parts.length - 2]; // get the next last part of the path
 	bannerWindow.bannerName = name;
 
-	bannerWindow.setSize(size[0], size[1]);
+	bannerWindow.setSize(size[0] * 2, size[1] * 2);
 
 	// load banner
 	bannerWindow.loadURL(url.format({
@@ -195,6 +196,9 @@ function showLogs() {
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // EVENT LISTENERS
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// app.commandLine.appendSwitch('high-dpi-support', 'true');
+// app.commandLine.appendSwitch('force-device-scale-factor', '1');
+
 app.on('ready', createWindow);
 app.on('open-file', (e, path) => {
 	loadProject(path);
