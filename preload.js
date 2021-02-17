@@ -30,7 +30,8 @@ if (fastForwardMethod === 'callback') {
 			// get amount of seconds to wait
 			// get top level timeline
 			let seconds = parseFloat(localStorage.getItem('seek-to-time'));
-			let rootTimeline = TimelineLite.exportRoot();
+			console.log(TimelineLite.exportRoot)
+			let rootTimeline = TimelineLite.exportRoot ? TimelineLite.exportRoot() : gsap.globalTimeline;
 			switch (fastForwardMethod) {
 				case 'fast-forward':
 					// speed up banner 10x and wait for seconds / 10
@@ -53,7 +54,7 @@ if (fastForwardMethod === 'callback') {
 
 function captureBySeek() {
 	// get top level timeline
-	let rootTimeline = TimelineLite.exportRoot();
+	let rootTimeline = TimelineLite.exportRoot ? TimelineLite.exportRoot() : gsap.globalTimeline;
 	// seek to end of timeline
 	rootTimeline.seek(rootTimeline.duration());
 	setTimeout(capture, 100);
